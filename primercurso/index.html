@@ -674,6 +674,14 @@ show(0);
     <a href="/" style="background:linear-gradient(120deg,#6366F1,#9333EA,#D6249F);color:#fff;font-weight:600;padding:12px 22px;border-radius:12px;text-decoration:none">Ir al portal →</a>
   </div>
 </div>
-<script>(function(){try{if(!localStorage.getItem('heat_portal_auth')){document.getElementById('gate').style.display='flex';}}catch(e){}})();</script>
+<script>(function(){
+  var gate=document.getElementById('gate');
+  var t=null; try{t=localStorage.getItem('heat_portal_token');}catch(e){}
+  if(!t){ gate.style.display='flex'; return; }
+  // Verifica que la sesión siga siendo válida en el backend.
+  fetch('/api/me',{headers:{'Authorization':'Bearer '+t}})
+    .then(function(r){ if(!r.ok){ gate.style.display='flex'; } })
+    .catch(function(){ /* sin red: si hay token, dejamos pasar */ });
+})();</script>
 </body>
 </html>
